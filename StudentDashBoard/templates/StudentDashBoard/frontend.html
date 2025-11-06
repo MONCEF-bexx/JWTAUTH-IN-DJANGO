@@ -1,0 +1,65 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Dashboard - API Tester</title>
+  <link rel="stylesheet" href="{% static 'StudentDashBoard/style.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h1>Student Dashboard — API Tester</h1>
+
+    <section class="box">
+      <h2>Authentication</h2>
+      <div class="row">
+        <label>Username <input id="username" value="admin" /></label>
+        <label>Password <input id="password" type="password" value="admin" /></label>
+        <button id="btn-obtain">Obtain Token</button>
+        <button id="btn-refresh">Refresh Access</button>
+      </div>
+      <div>
+        <h3>Tokens</h3>
+        <pre id="tokens">{ "access": null, "refresh": null }</pre>
+      </div>
+    </section>
+
+    <section class="box">
+      <h2>Students</h2>
+      <div class="row">
+        <button id="btn-list-students">GET /students/</button>
+        <button id="btn-create-student">POST /students/</button>
+      </div>
+      <div>
+        <h3>Create student</h3>
+        <label>Name <input id="student-name" /></label>
+        <label>Email <input id="student-email" /></label>
+      </div>
+      <pre id="students-output">(no output yet)</pre>
+    </section>
+
+    <section class="box">
+      <h2>Teachers</h2>
+      <div class="row">
+        <button id="btn-list-teachers">GET /teachers/</button>
+        <button id="btn-create-teacher">POST /teachers/</button>
+      </div>
+      <div>
+        <h3>Create teacher</h3>
+        <label>Name <input id="teacher-name" /></label>
+        <label>Email <input id="teacher-email" /></label>
+      </div>
+      <pre id="teachers-output">(no output yet)</pre>
+    </section>
+
+    <section class="box">
+      <h2>Raw request / response</h2>
+      <pre id="raw">(log)</pre>
+    </section>
+
+  </div>
+
+  <script src="{% static 'StudentDashBoard/app.js' %}"></script>
+</body>
+</html>
