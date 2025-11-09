@@ -64,6 +64,8 @@
     return h;
   }
 
+  // (No-op) previous teacher select loader was removed — frontend now accepts teacher name
+
   async function listStudents() {
     log('GET /students/');
     const res = await fetch('/students/', { headers: authHeaders() });
@@ -75,7 +77,9 @@
   async function createStudent() {
     const name = document.getElementById('student-name').value;
     const email = document.getElementById('student-email').value;
+    const teacherName = document.getElementById('student-teacher-name') ? document.getElementById('student-teacher-name').value : '';
     const payload = { name, email };
+    if (teacherName) payload.teacher_name = teacherName;
     log('POST /students/ ' + JSON.stringify(payload));
     const res = await fetch('/students/', {
       method: 'POST',
