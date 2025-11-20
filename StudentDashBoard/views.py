@@ -3,6 +3,7 @@ from rest_framework.permissions import BasePermission
 from rest_framework import viewsets,serializers
 from .models import Student, Teacher , User
 from .serializer import StudentSerializer, TeacherSerializer
+from rest_framework.exceptions import ValidationError 
 
 class IsStudent(BasePermission):
     def has_permission(self,request,view):
@@ -25,7 +26,7 @@ class IsTeacher(BasePermission):
     def has_permission(self,request,view):
         return request.user.role in ['teacher','TEACHER']
     def has_object_permission(self, request, view, obj):
-        if request.user.is_staff and request.methode != "POST" :
+        if request.user.is_staff  :
             return True
         else : 
             return request.user.role in ['teacher','TEACHER']
@@ -46,20 +47,21 @@ class StudentViewSet(viewsets.ModelViewSet):
         if self.request.user.role in ['teacher','TEACHER'] : 
             teacher = Teacher.objects.get(user = self.request.user)
             try :
-                user = User.objects.get(email = self.request.user.email)
+                user = User.objects.get(email = self.request.user).first()
             except user.DoesNotExist :
-                raise serializers.ValidationError(f"No user found with email '{self.request.user.email}'")
+                raise ValidationError(f"No user found with email '{self.request.user.email}'")
             serializer.save(user=user , teacher=teacher)
     
 class TeacherViewSet(viewsets.ModelViewSet):
     serializer_class = TeacherSerializer
-    permission_classes = [(IsAdmin|IsTeacher)&~IsStudent]
+    permission_classes = [IsAdmin|IsTeacher]
     def get_queryset(self):
         if self.request.user.is_staff : 
             return Teacher.objects.all()
         return Teacher.objects.all().filter(user = self.request.user)
     def perform_create(self,serializer):
-        if self.request.user.role in ['teacher','TEACHER'] : 
-            serializer.save(user=self.request.user)
+        user = User.objects.all().filter(email = serializer.validated_data.get("email")).first()
+        if  user and user.role.lower() =='teacher':
+            serializer.save(user=user)
         else :
-            serializer.save()
+            raise ValidationError("this email does not exist")
